@@ -1,0 +1,13 @@
+apply plugin: 'java'
+
+group 'org.morejdbc'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile 'junit:junit:4.12'
+}
