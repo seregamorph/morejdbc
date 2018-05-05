@@ -4,23 +4,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.sql.*;
-import java.util.Collection;
 
 public class DBUtils {
-
-    @Nullable
-    public static <T> T singleOrNull(Collection<T> elements) throws IllegalStateException {
-        if (elements == null) {
-            throw new IllegalStateException("null");
-        }
-        if (elements.isEmpty()) {
-            return null;
-        }
-        if (elements.size() > 1) {
-            throw new IllegalStateException("Illegal size " + elements.size() + " elements " + elements);
-        }
-        return elements.iterator().next();
-    }
 
     @Nullable
     public static Integer getIntOrNull(ResultSet rs, String columnName) throws SQLException {
