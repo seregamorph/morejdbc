@@ -24,6 +24,8 @@ dependencies {
     compile "org.springframework:spring-jdbc:${springVersion}"
     //compile 'com.oracle:ojdbc6:11.2.0.4.0'
 
+    testCompile 'org.postgresql:postgresql:42.2.2'
+
     testCompile 'junit:junit:4.12'
 }
 

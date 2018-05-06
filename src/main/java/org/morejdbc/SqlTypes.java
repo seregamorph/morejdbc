@@ -25,6 +25,11 @@ public class SqlTypes {
     public static final SqlType<Long> BIGINT = SqlType.of("bigint", Types.BIGINT,
             StatementCreatorUtils::setParameterValue, DBUtils::getLongOrNull);
     /**
+     * Types.NUMERIC
+     */
+    public static final SqlType<BigDecimal> NUMERIC = SqlType.of("numeric", Types.NUMERIC,
+            StatementCreatorUtils::setParameterValue, CallableStatement::getBigDecimal);
+    /**
      * Types.DECIMAL
      */
     public static final SqlType<BigDecimal> DECIMAL = SqlType.of("decimal", Types.DECIMAL,
