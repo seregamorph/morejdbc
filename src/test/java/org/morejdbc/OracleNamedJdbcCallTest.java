@@ -35,7 +35,7 @@ public class OracleNamedJdbcCallTest {
 
     @Before
     public void before() throws SQLException {
-        Properties props = TestUtils.propertiesFromString(TestUtils.readString("dbtest.properties"));
+        Properties props = TestUtils.propertiesFromString(TestUtils.readString("oracle_test.properties"));
         this.connection = DriverManager.getConnection(props.getProperty("url"), props);
         this.jdbc = jdbc(this.connection);
     }

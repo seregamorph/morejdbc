@@ -48,17 +48,17 @@ public class JdbcTemplateUtils {
         Assert.state(TransactionSynchronizationManager.isActualTransactionActive(), "Transaction is not started");
     }
 
-    public static NamedParameterJdbcTemplate namedJdbc(@Nonnull Connection connection) {
+    static NamedParameterJdbcTemplate namedJdbc(@Nonnull Connection connection) {
         JdbcTemplate jdbc = jdbc(connection);
         return new NamedParameterJdbcTemplate(jdbc);
     }
 
-    public static JdbcTemplate jdbc(@Nonnull Connection connection) {
+    static JdbcTemplate jdbc(@Nonnull Connection connection) {
         SmartDataSource ds = smartDataSource(connection);
         return new JdbcTemplate(ds);
     }
 
-    private static SmartDataSource smartDataSource(Connection connection) {
+    static SmartDataSource smartDataSource(Connection connection) {
         return new SingleConnectionDataSource(connection, false);
     }
 

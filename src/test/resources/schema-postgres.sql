@@ -11,3 +11,15 @@ BEGIN
 END; $$
 
 LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION refcursorfunc()
+  RETURNS refcursor AS $$
+DECLARE
+  mycurs refcursor;
+BEGIN
+  OPEN mycurs FOR SELECT 1
+                  UNION SELECT 2;
+  RETURN mycurs;
+END; $$
+language plpgsql;
+
