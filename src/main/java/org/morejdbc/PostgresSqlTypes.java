@@ -14,7 +14,8 @@ import java.util.List;
 public class PostgresSqlTypes {
 
     public static <T> SqlType<List<T>> cursor(RowMapper<T> rowMapper) {
-        return SqlType.of("cursor", Types.OTHER, null, (cs, idx) -> {
+        // maybe Types.OTHER
+        return SqlType.of("cursor", Types.REF_CURSOR, null, (cs, idx) -> {
             try (ResultSet rs = (ResultSet) cs.getObject(idx)) {
                 ResultSetExtractor<List<T>> extractor = new RowMapperResultSetExtractor<>(rowMapper);
                 return extractor.extractData(rs);

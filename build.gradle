@@ -20,11 +20,11 @@ dependencies {
     // @Language annotation
     compile 'org.jetbrains:annotations:15.0'
 
-    // optional
     compile "org.springframework:spring-jdbc:${springVersion}"
-    //compile 'com.oracle:ojdbc6:11.2.0.4.0'
 
+    //testCompile 'com.oracle:ojdbc6:11.2.0.4.0'
     testCompile 'org.postgresql:postgresql:42.2.2'
+    testCompile 'mysql:mysql-connector-java:8.0.11'
 
     testCompile 'junit:junit:4.12'
 }

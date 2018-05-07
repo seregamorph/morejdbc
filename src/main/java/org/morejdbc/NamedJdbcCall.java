@@ -25,6 +25,9 @@ import static java.util.Objects.requireNonNull;
  * Makes the call sql itself.
  * Note, that the object cannot be reused again.
  *
+ * Known supported databases: Oracle.
+ * Known unsupported databases: PostgreSQL, MySQL
+ *
  * @see org.springframework.jdbc.core.SqlParameterValue
  */
 public class NamedJdbcCall<T> implements ConnectionCallback<T>, SqlProvider {
