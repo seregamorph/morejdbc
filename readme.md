@@ -10,7 +10,7 @@ For Oracle procedure/function calls you can use NamedJdbcCall. The parameters ar
 
 Consider you have a procedure and a function:
 
-```oraclesqlplus
+```sql
 CREATE PROCEDURE test_math(
   val1    IN  number,
   val2        number,
