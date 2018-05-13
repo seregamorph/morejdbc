@@ -2,4 +2,5 @@
 .idea
 *.iws
 *.iml
-build
+build/
+out/
