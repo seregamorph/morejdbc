@@ -26,6 +26,9 @@ import static org.morejdbc.OracleSqlTypes.cursor;
 import static org.morejdbc.SqlTypes.*;
 import static org.morejdbc.TestUtils.immutableEntry;
 
+/**
+ * -Duser.country=en -Duser.language=en
+ */
 public class OracleJdbcCallTest {
 
     private Connection connection;

@@ -4,3 +4,4 @@
 *.iml
 build/
 out/
+lib/ojdbc6-11.2.0.4.0.jar

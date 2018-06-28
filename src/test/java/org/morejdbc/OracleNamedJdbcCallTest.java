@@ -28,6 +28,9 @@ import static org.morejdbc.OracleSqlTypes.cursor;
 import static org.morejdbc.SqlTypes.*;
 import static org.morejdbc.TestUtils.immutableEntry;
 
+/**
+ * -Duser.country=en -Duser.language=en
+ */
 public class OracleNamedJdbcCallTest {
 
     private Connection connection;
@@ -219,6 +222,7 @@ public class OracleNamedJdbcCallTest {
                 .in("val1", 1)
                 .in("val2", 2)
                 .out("out_sum", sum)
+                .out("out_mlt", Out.of(INTEGER))
         );
         assertEquals(sum.get(), Integer.valueOf(3));
     }
