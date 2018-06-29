@@ -1,3 +1,6 @@
+--liquibase formatted sql
+
+--changeset seregamorph:FEA-1-create-schema-1
 create table TEMP_PK_TRIGGER (
   ID    NUMBER not null primary key,
   VALUE VARCHAR2(400 char)
@@ -5,6 +8,7 @@ create table TEMP_PK_TRIGGER (
 
 create sequence TEMP_PK_TRIGGER_SEQ;
 
+--changeset seregamorph:FEA-1-create-schema-2 splitStatements:false
 create or replace trigger TEMP_PK_TRIGGER_BI
   before insert
   on TEMP_PK_TRIGGER
@@ -13,6 +17,7 @@ create or replace trigger TEMP_PK_TRIGGER_BI
     :new.id := temp_pk_trigger_seq.nextval;
   end;
 
+--changeset seregamorph:FEA-1-create-schema-3 splitStatements:false
 CREATE PROCEDURE test_math(
   val1    IN  number,
   val2        number,
@@ -24,6 +29,7 @@ CREATE PROCEDURE test_math(
     out_mlt := val1 * val2;
   END;
 
+--changeset seregamorph:FEA-1-create-schema-4 splitStatements:false
 CREATE FUNCTION get_concat(s1 varchar2, s2 varchar2)
   RETURN VARCHAR2
 IS
@@ -31,6 +37,7 @@ IS
     RETURN s1 || s2;
   END;
 
+--changeset seregamorph:FEA-1-create-schema-5 splitStatements:false
 CREATE FUNCTION simple_decode(p_str varchar2)
   return varchar2
 as
@@ -46,6 +53,7 @@ as
     return v_str;
   end simple_decode;
 
+--changeset seregamorph:FEA-1-create-schema-6 splitStatements:false
 CREATE FUNCTION get_extras_tab(extra_string varchar2)
   return sys_refcursor
 is
@@ -65,6 +73,7 @@ is
     return v_cur;
   end;
 
+--changeset seregamorph:FEA-1-create-schema-7 splitStatements:false
 CREATE FUNCTION blobs_concat(b1 blob, b2 blob)
   return blob
 is
@@ -74,6 +83,7 @@ is
     return b1_copy;
   end;
 
+--changeset seregamorph:FEA-1-create-schema-8 splitStatements:false
 CREATE PROCEDURE test_in_out(x in number, y number, io_sum in out number)
 is
   begin
