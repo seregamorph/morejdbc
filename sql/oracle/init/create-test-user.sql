@@ -1,6 +1,4 @@
---liquibase formatted sql
 
---changeset seregamorph:FEA-0-create-user-1
 CREATE USER test
 IDENTIFIED BY test
   DEFAULT TABLESPACE users;
@@ -15,5 +13,4 @@ CREATE TABLE,
 CREATE TRIGGER,
 CREATE PROCEDURE
 TO test;
---rollback not required
 
