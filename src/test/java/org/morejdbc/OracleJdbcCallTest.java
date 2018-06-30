@@ -12,10 +12,7 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -26,9 +23,6 @@ import static org.morejdbc.OracleSqlTypes.cursor;
 import static org.morejdbc.SqlTypes.*;
 import static org.morejdbc.TestUtils.immutableEntry;
 
-/**
- * -Duser.country=en -Duser.language=en
- */
 public class OracleJdbcCallTest {
 
     private Connection connection;
@@ -37,7 +31,14 @@ public class OracleJdbcCallTest {
     @Before
     public void before() throws SQLException {
         Properties props = TestUtils.propertiesFromString(TestUtils.readString("oracle_test.properties"));
-        this.connection = DriverManager.getConnection(props.getProperty("url"), props);
+        Locale def = Locale.getDefault();
+        try {
+            // workarond for XE with russian locale
+            Locale.setDefault(Locale.ENGLISH);
+            this.connection = DriverManager.getConnection(props.getProperty("url"), props);
+        } finally {
+            Locale.setDefault(def);
+        }
         this.jdbc = jdbc(this.connection);
     }
 
