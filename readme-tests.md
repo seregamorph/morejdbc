@@ -9,16 +9,16 @@ docker run --rm -it -p 1521:1521 -v $PWD/sql/oracle/init:/docker-entrypoint-init
 ```
 You can pass the tablespace volume with extra parameter '-v $HOME/oracle_data:/u01/app/oracle' 
 
-####Create Oracle schema as test user
+#### Create Oracle schema as test user
 ```
-# Workaround only for XE and Russian locale
 pushd sql/oracle
+# Workaround only for XE and Russian locale
 # export JAVA_OPTS="-Duser.country=en -Duser.language=en"
 $LIQUIBASE_HOME/liquibase --url=jdbc:oracle:thin:@127.0.0.1:1521:XE --username=test --password=test --changeLogFile=changelog.xml --logLevel=info update
 popd
 ```
 
-####Run tests
+#### Run tests
 ```
 OracleJdbcCallTest
 OracleNamedJdbcCallTest
