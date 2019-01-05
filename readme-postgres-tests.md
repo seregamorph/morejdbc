@@ -6,7 +6,7 @@ Copy driver to $LIQUIBASE_HOME/lib
 
 #### Run docker with Postgres 10.4
 ```
-cd sql/mysql
+cd sql/postgres
 docker run --rm -t -p 5432:5432 -e POSTGRES_PASSWORD=postgres -v $PWD/init:/docker-entrypoint-initdb.d --name postgres postgres:10
 ```
 
