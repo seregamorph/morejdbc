@@ -20,7 +20,7 @@ $LIQUIBASE_HOME/liquibase --url=jdbc:mysql://127.0.0.1:3306/test --username=test
 MysqlJdbcCallTest
 ```
 
-#### Stop docker with Oracle (auto deletes container)
+#### Stop docker with MySQL (auto deletes container)
 ```
 docker stop mysql
 ```
