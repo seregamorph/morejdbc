@@ -25,6 +25,9 @@ import static org.morejdbc.JdbcCall.callSql;
 import static org.morejdbc.PostgresSqlTypes.cursor;
 import static org.morejdbc.SqlTypes.NUMERIC;
 
+/**
+ * Follow instructions in readme-postgres-tests.md to prepare the database.
+ */
 public class PostgresJdbcCallTest {
 
     private Connection connection;

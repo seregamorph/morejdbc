@@ -15,6 +15,9 @@ import static org.junit.Assert.assertEquals;
 import static org.morejdbc.JdbcCall.callSql;
 import static org.morejdbc.SqlTypes.INTEGER;
 
+/**
+ * Follow instructions in readme-mysql-tests.md to prepare the database.
+ */
 public class MysqlJdbcCallTest {
 
     private Connection connection;

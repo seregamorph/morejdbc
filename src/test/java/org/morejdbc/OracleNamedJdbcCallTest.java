@@ -25,6 +25,9 @@ import static org.morejdbc.OracleSqlTypes.cursor;
 import static org.morejdbc.SqlTypes.*;
 import static org.morejdbc.TestUtils.immutableEntry;
 
+/**
+ * Follow instructions in readme-oracle-tests.md to prepare the database.
+ */
 public class OracleNamedJdbcCallTest {
 
     private Connection connection;

@@ -8,9 +8,9 @@ Copy driver to $LIQUIBASE_HOME/lib
 ```
 cd sql/oracle
 rm -f init/.cache
-docker run --rm -t -p 1521:1521 -v $PWD/init:/docker-entrypoint-initdb.d --name oracle sath89/oracle-xe-11g
+docker run --rm -it -p 1521:1521 -v $PWD/init:/docker-entrypoint-initdb.d --name oracle wnameless/oracle-xe-11g-r2
 ```
-You can pass the tablespace volume with extra parameter '-v $HOME/oracle_data:/u01/app/oracle' 
+You can pass the tablespace volume with extra parameter `-v $HOME/oracle_data:/u01/app/oracle` 
 
 #### Create Oracle schema as test user
 ```
