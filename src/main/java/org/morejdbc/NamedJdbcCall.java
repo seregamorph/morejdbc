@@ -34,7 +34,7 @@ public class NamedJdbcCall<T> implements ConnectionCallback<T>, SqlProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(NamedJdbcCall.class);
 
-    private List<NamedParameter> parameters = new ArrayList<>();
+    private List<NamedParameter<?>> parameters = new ArrayList<>();
     private SQLExceptionHandler<T> sqlExceptionHandler;
 
     private final String name;
@@ -178,7 +178,7 @@ public class NamedJdbcCall<T> implements ConnectionCallback<T>, SqlProvider {
 
     @Override
     public T doInConnection(Connection conn) throws SQLException, DataAccessException {
-        NamedParameter[] parameters = getParameters();
+        NamedParameter<?>[] parameters = getParameters();
 
         this.sql = getSql(returnType != null, parameters);
         logger.trace("sql: {}", sql);
@@ -193,7 +193,7 @@ public class NamedJdbcCall<T> implements ConnectionCallback<T>, SqlProvider {
                 offset = 0;
             }
             for (int i = 0; i < parameters.length; i++) {
-                NamedParameter parameter = parameters[i];
+                NamedParameter<?> parameter = parameters[i];
                 parameter.beforeExecute(cs, i + offset + 1);
             }
 
@@ -203,7 +203,7 @@ public class NamedJdbcCall<T> implements ConnectionCallback<T>, SqlProvider {
                 result.afterExecute(cs, 1);
             }
             for (int i = 0; i < parameters.length; i++) {
-                NamedParameter parameter = parameters[i];
+                NamedParameter<?> parameter = parameters[i];
                 parameter.afterExecute(cs, i + offset + 1);
             }
             return result != null ? result.get() : null;
@@ -220,20 +220,20 @@ public class NamedJdbcCall<T> implements ConnectionCallback<T>, SqlProvider {
         return sql;
     }
 
-    private NamedParameter[] getParameters() {
+    private NamedParameter<?>[] getParameters() {
         if (this.parameters == null) {
-            throw new IllegalStateException("already executed");
+            throw new IllegalStateException("Already executed, this object cannot be reused.");
         }
-        NamedParameter[] parameters = this.parameters.toArray(new NamedParameter[this.parameters.size()]);
+        NamedParameter<?>[] parameters = this.parameters.toArray(new NamedParameter[0]);
         this.parameters = null;
         return parameters;
     }
 
-    private String getSql(boolean function, NamedParameter... parameters) {
+    private String getSql(boolean function, NamedParameter<?>... parameters) {
         StringBuilder sql = new StringBuilder(function ? "{? = call " : "{call ")
                 .append(name).append("(");
         for (int i = 0; i < parameters.length; i++) {
-            NamedParameter parameter = parameters[i];
+            NamedParameter<?> parameter = parameters[i];
             if (i > 0) {
                 sql.append(", ");
             }

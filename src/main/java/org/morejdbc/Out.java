@@ -1,8 +1,9 @@
 package org.morejdbc;
 
+import java.util.function.Supplier;
 import org.springframework.util.Assert;
 
-public class Out<T> extends AbstractOut<T> {
+public class Out<T> extends AbstractOut<T> implements Supplier<T> {
 
     private T value;
 
@@ -19,6 +20,7 @@ public class Out<T> extends AbstractOut<T> {
         this.value = value;
     }
 
+    @Override
     public T get() {
         Assert.state(afterExecuted, "value was not set");
         return value;

@@ -1,6 +1,5 @@
 
 https://download.liquibase.org/download/
-Install liquibase 3.5.5 (don't install the latest, it's broken)
 Set environment variable LIQUIBASE_HOME
 Copy driver to $LIQUIBASE_HOME/lib
 

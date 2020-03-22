@@ -8,17 +8,23 @@ public class SqlType<T> {
 
     private final String printName;
     private final int sqlType;
+    /**
+     * Setter can be null for read-only types.
+     */
+    @Nullable
     final CallableStatementSetter<T> setter;
     private final CallableStatementExtractor<T> extractor;
 
-    private SqlType(String printName, int sqlType, CallableStatementSetter<T> setter, CallableStatementExtractor<T> extractor) {
+    private SqlType(String printName, int sqlType, @Nullable CallableStatementSetter<T> setter,
+                    CallableStatementExtractor<T> extractor) {
         this.printName = printName;
         this.sqlType = sqlType;
         this.setter = setter;
         this.extractor = extractor;
     }
 
-    static <T> SqlType<T> of(String printName, int sqlType, CallableStatementSetter<T> setter, CallableStatementExtractor<T> extractor) {
+    static <T> SqlType<T> of(String printName, int sqlType, @Nullable CallableStatementSetter<T> setter,
+                             CallableStatementExtractor<T> extractor) {
         return new SqlType<>(printName, sqlType, setter, extractor);
     }
 

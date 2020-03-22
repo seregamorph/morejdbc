@@ -39,14 +39,9 @@ dependencies {
     testCompile 'ch.qos.logback:logback-classic:1.2.3'
 }
 
-// all sub-projects dependency tree
-// ./gradlew dep
-task dep(type: DependencyReportTask) {
-}
-
 test {
     testLogging {
-        events 'started', 'passed', 'failed', 'skipped', 'standard_out', 'standard_error'
+        events 'passed', 'failed', 'skipped'
     }
 }
 

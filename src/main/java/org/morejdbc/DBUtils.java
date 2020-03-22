@@ -16,14 +16,6 @@ public class DBUtils {
         return value;
     }
 
-    public static int getIntNotNull(ResultSet rs, String columnName) throws SQLException, SQLConstraintException {
-        int value = rs.getInt(columnName);
-        if (rs.wasNull()) {
-            throw new SQLConstraintException("Value of column " + columnName + " of result set is null");
-        }
-        return value;
-    }
-
     @Nullable
     public static Integer getIntOrNull(CallableStatement cs, int idx) throws SQLException {
         int value = cs.getInt(idx);
@@ -38,14 +30,6 @@ public class DBUtils {
         long value = rs.getLong(columnName);
         if (rs.wasNull()) {
             return null;
-        }
-        return value;
-    }
-
-    public static long getLongNotNull(ResultSet rs, String columnName) throws SQLException, SQLConstraintException {
-        long value = rs.getLong(columnName);
-        if (rs.wasNull()) {
-            throw new SQLConstraintException("Value of column " + columnName + " of result set is null");
         }
         return value;
     }
@@ -68,41 +52,6 @@ public class DBUtils {
         return value;
     }
 
-    public static double getDoubleNotNull(ResultSet rs, String columnName) throws SQLException, SQLConstraintException {
-        double value = rs.getDouble(columnName);
-        if (rs.wasNull()) {
-            throw new SQLConstraintException("Value of column " + columnName + " of result set is null");
-        }
-        return value;
-    }
-
-    @Nonnull
-    public static Timestamp getTimestampNotNull(ResultSet rs, String columnName) throws SQLException, SQLConstraintException {
-        Timestamp value = rs.getTimestamp(columnName);
-        if (value == null) {
-            throw new SQLConstraintException("Value of column " + columnName + " of result set is null");
-        }
-        return value;
-    }
-
-    @Nonnull
-    public static BigDecimal getBigDecimalNotNull(ResultSet rs, String columnName) throws SQLException, SQLConstraintException {
-        BigDecimal value = rs.getBigDecimal(columnName);
-        if (value == null) {
-            throw new SQLConstraintException("Value of column " + columnName + " of result set is null");
-        }
-        return value;
-    }
-
-    @Nonnull
-    public static String getStringNotNull(ResultSet rs, String columnName) throws SQLException, SQLConstraintException {
-        String value = rs.getString(columnName);
-        if (value == null) {
-            throw new SQLConstraintException("Value of column " + columnName + " of result set is null");
-        }
-        return value;
-    }
-
     @Nullable
     public static byte[] getBlobBytes(ResultSet rs, String columnName) throws SQLException {
         Blob blob = rs.getBlob(columnName);
@@ -113,15 +62,6 @@ public class DBUtils {
                 blob.free();
             }
         }
-    }
-
-    @Nonnull
-    public static byte[] getBlobBytesNotNull(ResultSet rs, String columnName) throws SQLException {
-        byte[] bb = getBlobBytes(rs, columnName);
-        if (bb == null) {
-            throw new SQLConstraintException("Value of blob column " + columnName + " of result set is null");
-        }
-        return bb;
     }
 
     @Nullable

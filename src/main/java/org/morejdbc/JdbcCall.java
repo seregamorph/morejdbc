@@ -22,6 +22,7 @@ import static java.util.Objects.requireNonNull;
  * Returns values in Out objects.
  */
 public class JdbcCall implements ConnectionCallback<Void>, SqlProvider {
+
     private final String sql;
 
     private List<InOut<?>> parameters = new ArrayList<>();
