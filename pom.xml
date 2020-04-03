@@ -4,7 +4,7 @@
 
     <groupId>com.github.seregamorph</groupId>
     <artifactId>morejdbc</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>0.1</version>
     <packaging>jar</packaging>
 
     <name>morejdbc</name>
@@ -24,7 +24,7 @@
         <connection>scm:git:git@github.com:seregamorph/morejdbc.git</connection>
         <developerConnection>scm:git:git@github.com:seregamorph/morejdbc.git</developerConnection>
         <url>https://github.com/seregamorph/morejdbc</url>
-        <tag>HEAD</tag>
+        <tag>morejdbc-0.1</tag>
     </scm>
 
     <developers>
