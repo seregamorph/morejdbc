@@ -1,5 +1,6 @@
 package org.morejdbc;
 
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
@@ -7,7 +8,6 @@ import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.SqlProvider;
 import org.springframework.util.Assert;
 
-import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -25,8 +25,8 @@ import static java.util.Objects.requireNonNull;
  * Makes the call sql itself.
  * Note, that the object cannot be reused again.
  *
- * Known supported databases: Oracle.
- * Known unsupported databases: PostgreSQL, MySQL
+ * Known supported databases: Oracle and DB2.
+ * Known unsupported databases: PostgreSQL, MySQL.
  *
  * @see org.springframework.jdbc.core.SqlParameterValue
  */
@@ -34,7 +34,7 @@ public class NamedJdbcCall<T> implements ConnectionCallback<T>, SqlProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(NamedJdbcCall.class);
 
-    private List<NamedParameter<?>> parameters = new ArrayList<>();
+    List<NamedParameter<?>> parameters = new ArrayList<>();
     private SQLExceptionHandler<T> sqlExceptionHandler;
 
     private final String name;
@@ -90,6 +90,7 @@ public class NamedJdbcCall<T> implements ConnectionCallback<T>, SqlProvider {
     }
 
     private NamedJdbcCall<T> outImpl(String name, AbstractOut<?> out) {
+        out.onAdd(parameters.size());
         parameters.add(new NamedParameter<>(name, null, requireNonNull(out, "out")));
         return this;
     }
@@ -109,6 +110,7 @@ public class NamedJdbcCall<T> implements ConnectionCallback<T>, SqlProvider {
     }
 
     private <V> NamedJdbcCall<T> inOutImpl(String name, In<V> in, AbstractOut<V> out) {
+        out.onAdd(parameters.size());
         parameters.add(new NamedParameter<>(name, requireNonNull(in, "in"), requireNonNull(out, "out")));
         return this;
     }
@@ -167,12 +169,33 @@ public class NamedJdbcCall<T> implements ConnectionCallback<T>, SqlProvider {
         return this;
     }
 
-    private static class NamedParameter<T> extends InOut<T> {
+    static class NamedParameter<T> extends InOut<T> {
+
         private final String name;
 
         NamedParameter(String name, In<T> in, AbstractOut<T> out) {
             super(in, out);
             this.name = requireNonNull(name, "name");
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+            if (!super.equals(o)) {
+                return false;
+            }
+            NamedParameter<?> that = (NamedParameter<?>) o;
+            return name.equals(that.name);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(super.hashCode(), name);
         }
     }
 
@@ -218,6 +241,25 @@ public class NamedJdbcCall<T> implements ConnectionCallback<T>, SqlProvider {
     @Override
     public String getSql() {
         return sql;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        NamedJdbcCall<?> that = (NamedJdbcCall<?>) o;
+        return Objects.equals(parameters, that.parameters) &&
+                name.equals(that.name) &&
+                Objects.equals(returnType, that.returnType);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(parameters, name, returnType);
     }
 
     private NamedParameter<?>[] getParameters() {

@@ -1,8 +1,8 @@
 package org.morejdbc;
 
+import org.jetbrains.annotations.Nullable;
 import org.springframework.jdbc.core.namedparam.AbstractSqlParameterSource;
 
-import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.LinkedHashMap;

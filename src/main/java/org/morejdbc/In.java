@@ -1,10 +1,12 @@
 package org.morejdbc;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
+
 import java.math.BigDecimal;
 import java.sql.CallableStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
 
@@ -63,6 +65,24 @@ class In<T> {
 
     void beforeExecute(CallableStatement cs, int idx) throws SQLException {
         type.inBeforeExecute(cs, idx, value);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        In<?> that = (In<?>) o;
+        return Objects.equals(value, that.value)
+                && type.equals(that.type);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value, type);
     }
 
     @Override

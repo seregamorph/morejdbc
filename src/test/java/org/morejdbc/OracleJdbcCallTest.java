@@ -12,16 +12,26 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.morejdbc.JdbcCall.callSql;
-import static org.morejdbc.JdbcTemplateUtils.jdbc;
 import static org.morejdbc.OracleSqlTypes.cursor;
-import static org.morejdbc.SqlTypes.*;
+import static org.morejdbc.SqlTypes.BIGINT;
+import static org.morejdbc.SqlTypes.BLOB;
+import static org.morejdbc.SqlTypes.INTEGER;
+import static org.morejdbc.SqlTypes.VARCHAR;
 import static org.morejdbc.TestUtils.immutableEntry;
+import static org.morejdbc.TestUtils.jdbc;
 
 /**
  * Follow instructions in readme-oracle-tests.md to prepare the database.

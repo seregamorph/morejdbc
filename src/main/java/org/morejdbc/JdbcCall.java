@@ -1,11 +1,11 @@
 package org.morejdbc;
 
 import org.intellij.lang.annotations.Language;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.SqlProvider;
 
-import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 import static java.util.Objects.requireNonNull;
@@ -25,7 +26,7 @@ public class JdbcCall implements ConnectionCallback<Void>, SqlProvider {
 
     private final String sql;
 
-    private List<InOut<?>> parameters = new ArrayList<>();
+    List<InOut<?>> parameters = new ArrayList<>();
 
     private JdbcCall(@Language("SQL") String sql) {
         this.sql = requireNonNull(sql, "sql");
@@ -69,6 +70,7 @@ public class JdbcCall implements ConnectionCallback<Void>, SqlProvider {
     }
 
     private JdbcCall outImpl(AbstractOut<?> out) {
+        out.onAdd(parameters.size());
         parameters.add(new InOut<>(null, requireNonNull(out, "out")));
         return this;
     }
@@ -111,6 +113,24 @@ public class JdbcCall implements ConnectionCallback<Void>, SqlProvider {
     @Override
     public String getSql() {
         return sql;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        JdbcCall that = (JdbcCall) o;
+        return Objects.equals(sql, that.sql) &&
+                Objects.equals(parameters, that.parameters);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(sql, parameters);
     }
 
     private InOut[] getParameters() {

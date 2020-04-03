@@ -1,9 +1,16 @@
 package org.morejdbc;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.io.*;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.SingleConnectionDataSource;
+import org.springframework.jdbc.datasource.SmartDataSource;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
+import java.io.UncheckedIOException;
 import java.net.URL;
+import java.sql.Connection;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
@@ -12,8 +19,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 class TestUtils {
 
-    @Nonnull
-    static Properties propertiesFromString(@Nullable String str) {
+    static Properties propertiesFromString(String str) {
         Properties properties = new Properties();
         if (str != null && !str.isEmpty()) {
             try {
@@ -25,9 +31,9 @@ class TestUtils {
         return properties;
     }
 
-
     static <K, V> Map.Entry<K, V> immutableEntry(K key, V value) {
         return new Map.Entry<K, V>() {
+
             @Override
             public K getKey() {
                 return key;
@@ -74,16 +80,6 @@ class TestUtils {
         }
     }
 
-    static byte[] toByteArray(InputStream input) throws IOException {
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        byte[] buffer = new byte[8192];
-        int n;
-        while ((n = input.read(buffer)) != -1) {
-            output.write(buffer, 0, n);
-        }
-        return output.toByteArray();
-    }
-
     static byte[] concat(byte[]... arrays) {
         int length = 0;
         for (byte[] array : arrays) {
@@ -98,7 +94,6 @@ class TestUtils {
         return result;
     }
 
-    @Nonnull
     static byte[] readBytes(ClassLoader classLoader, String resource) {
         URL url = classLoader.getResource(resource);
         if (url == null) {
@@ -114,13 +109,30 @@ class TestUtils {
         }
     }
 
-    @Nonnull
     static byte[] readBytes(String resource) {
         return readBytes(TestUtils.class.getClassLoader(), resource);
     }
 
-    @Nonnull
     static String readString(String resource) {
         return new String(readBytes(resource), UTF_8);
+    }
+
+    private static byte[] toByteArray(InputStream input) throws IOException {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        byte[] buffer = new byte[8192];
+        int n;
+        while ((n = input.read(buffer)) != -1) {
+            output.write(buffer, 0, n);
+        }
+        return output.toByteArray();
+    }
+
+    static JdbcTemplate jdbc(Connection connection) {
+        SmartDataSource ds = smartDataSource(connection);
+        return new JdbcTemplate(ds);
+    }
+
+    static SmartDataSource smartDataSource(Connection connection) {
+        return new SingleConnectionDataSource(connection, false);
     }
 }

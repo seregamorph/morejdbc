@@ -38,7 +38,7 @@ public class PostgresJdbcCallTest {
     public void before() throws SQLException {
         Properties props = TestUtils.propertiesFromString(TestUtils.readString("psql_test.properties"));
         this.connection = DriverManager.getConnection(props.getProperty("url"), props);
-        DataSource dataSource = JdbcTemplateUtils.smartDataSource(this.connection);
+        DataSource dataSource = TestUtils.smartDataSource(this.connection);
         PlatformTransactionManager transactionManager = new DataSourceTransactionManager(dataSource);
         this.transactionTemplate = new TransactionTemplate(transactionManager);
         this.jdbc = new JdbcTemplate(dataSource);

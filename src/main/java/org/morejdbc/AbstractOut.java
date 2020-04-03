@@ -4,6 +4,7 @@ import org.springframework.util.Assert;
 
 import java.sql.CallableStatement;
 import java.sql.SQLException;
+import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
 
@@ -33,5 +34,32 @@ abstract class AbstractOut<T> {
         afterExecuted = true;
     }
 
+    void afterExecute(T value) {
+        Assert.state(!afterExecuted, "value already set");
+        set(value);
+        afterExecuted = true;
+    }
+
     abstract void set(T value);
+
+    void onAdd(int index) {
+        // no op by default
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof AbstractOut)) {
+            return false;
+        }
+        AbstractOut<?> that = (AbstractOut<?>) o;
+        return type.equals(that.type);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type);
+    }
 }

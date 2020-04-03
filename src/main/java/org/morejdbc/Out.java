@@ -1,13 +1,14 @@
 package org.morejdbc;
 
-import java.util.function.Supplier;
 import org.springframework.util.Assert;
+
+import java.util.function.Supplier;
 
 public class Out<T> extends AbstractOut<T> implements Supplier<T> {
 
     private T value;
 
-    private Out(SqlType<T> type) {
+    Out(SqlType<T> type) {
         super(type);
     }
 

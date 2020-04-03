@@ -1,6 +1,7 @@
 package org.morejdbc;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
+
 import java.sql.CallableStatement;
 import java.sql.SQLException;
 

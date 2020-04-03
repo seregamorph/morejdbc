@@ -1,9 +1,11 @@
 package org.morejdbc;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.math.BigDecimal;
-import java.sql.*;
+import org.jetbrains.annotations.Nullable;
+
+import java.sql.Blob;
+import java.sql.CallableStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class DBUtils {
 
