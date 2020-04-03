@@ -21,6 +21,5 @@ PostgresJdbcCallTest
 
 #### Stop docker with Oracle (auto deletes container)
 ```
-docker stop postgres
+docker stop morejdbc-postgres
 ```
-

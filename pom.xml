@@ -12,6 +12,8 @@
         Micro framework to call stored procedures.
     </description>
 
+    <url>https://github.com/seregamorph/morejdbc</url>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -24,6 +26,22 @@
         <url>https://github.com/seregamorph/morejdbc</url>
         <tag>HEAD</tag>
     </scm>
+
+    <developers>
+        <developer>
+            <id>seregamorph</id>
+            <name>Sergey Chernov</name>
+            <email>serega.morph[at]gmail.com</email>
+        </developer>
+    </developers>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
     <dependencies>
         <dependency>
@@ -219,7 +237,6 @@
     </build>
 
     <profiles>
-        <!-- GPG Signature on release -->
         <profile>
             <id>release-sign-artifacts</id>
             <activation>

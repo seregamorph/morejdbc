@@ -21,6 +21,5 @@ MysqlJdbcCallTest
 
 #### Stop docker with MySQL (auto deletes container)
 ```
-docker stop mysql
+docker stop morejdbc-mysql
 ```
-

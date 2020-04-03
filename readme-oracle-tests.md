@@ -27,9 +27,9 @@ OracleNamedJdbcCallTest
 
 #### Stop docker with Oracle (auto deletes container)
 ```
-docker stop oracle
+docker stop morejdbc-oracle
 ```
 
 For more information:
-https://hub.docker.com/r/sath89/oracle-xe-11g/
-https://github.com/MaksymBilenko/docker-oracle-xe-11g
+https://github.com/wnameless/docker-oracle-xe-11g
+https://hub.docker.com/r/wnameless/oracle-xe-11g-r2
