@@ -197,6 +197,11 @@ public class NamedJdbcCall<T> implements ConnectionCallback<T>, SqlProvider {
         public int hashCode() {
             return Objects.hash(super.hashCode(), name);
         }
+
+        @Override
+        public String toString() {
+            return name + " " + super.toString();
+        }
     }
 
     @Override

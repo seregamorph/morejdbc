@@ -4,6 +4,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.CallableStatement;
 import java.sql.SQLException;
+import java.util.Objects;
 
 public class SqlType<T> {
 
@@ -22,6 +23,24 @@ public class SqlType<T> {
         this.sqlType = sqlType;
         this.setter = setter;
         this.extractor = extractor;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        SqlType<?> that = (SqlType<?>) o;
+        return sqlType == that.sqlType &&
+                printName.equals(that.printName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(printName, sqlType);
     }
 
     static <T> SqlType<T> of(String printName, int sqlType, @Nullable CallableStatementSetter<T> setter,

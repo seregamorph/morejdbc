@@ -90,3 +90,19 @@ is
     io_sum := x + y + io_sum;
   end;
 
+--changeset seregamorph:FEA-1-create-schema-9 splitStatements:false
+CREATE PROCEDURE proc_extras_tab(extra_string varchar2, out_extra_string OUT varchar2, v_cur OUT sys_refcursor)
+    is
+begin
+    out_extra_string := extra_string;
+    open v_cur for
+        select
+            simple_decode(regexp_replace(pair, '([^=]+)(=)(.+)', '\1')) id,
+            simple_decode(regexp_replace(pair, '([^=]+)(=)(.+)', '\3')) value
+        from (
+                 select regexp_substr(extra_string, '[^;]+', 1, level)
+                            as pair
+                 from dual
+                 connect by instr(extra_string, ';', 1, level) > 0
+             );
+end;
