@@ -11,8 +11,8 @@ import java.io.StringReader;
 import java.io.UncheckedIOException;
 import java.net.URL;
 import java.sql.Connection;
+import java.util.AbstractMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Properties;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -32,43 +32,7 @@ class TestUtils {
     }
 
     static <K, V> Map.Entry<K, V> immutableEntry(K key, V value) {
-        return new Map.Entry<K, V>() {
-
-            @Override
-            public K getKey() {
-                return key;
-            }
-
-            @Override
-            public V getValue() {
-                return value;
-            }
-
-            @Override
-            public V setValue(V value) {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public boolean equals(Object o) {
-                if (!(o instanceof Map.Entry)) {
-                    return false;
-                }
-                Map.Entry<?, ?> that = (Map.Entry<?, ?>) o;
-                return Objects.equals(this.getKey(), that.getKey()) &&
-                        Objects.equals(this.getValue(), that.getValue());
-            }
-
-            @Override
-            public int hashCode() {
-                return Objects.hash(key, value);
-            }
-
-            @Override
-            public String toString() {
-                return key + "=" + value;
-            }
-        };
+        return new AbstractMap.SimpleImmutableEntry<>(key, value);
     }
 
     static void closeQuietly(InputStream in) {

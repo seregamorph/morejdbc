@@ -1,6 +1,16 @@
 This project contains helper classes to call stored procedures and functions. The base framework is spring (spring-jdbc).
 It is fair-typesafe (no unsafe casts inside). Most compatible database is Oracle.
 
+To add the library in Maven:
+```xml
+<dependency>
+    <groupId>com.github.seregamorph</groupId>
+    <artifactId>morejdbc</artifactId>
+    <version>1.0</version>
+</dependency>
+```
+For gradle: `compile com.github.seregamorph:morejdbc:1.0`
+
 # Oracle Examples
 
 For Oracle procedure/function calls you can use NamedJdbcCall. The parameters are passing by name, that allows:

@@ -24,9 +24,50 @@ import static java.util.Objects.requireNonNull;
  * Helper class to call stored procedures and functions with named parameters.
  * Makes the call sql itself.
  * Note, that the object cannot be reused again.
- *
+ * <p>
  * Known supported databases: Oracle and DB2.
  * Known unsupported databases: PostgreSQL, MySQL.
+ * <p>
+ * Usage example:
+ * <pre>
+ * import org.morejdbc.*;
+ * import org.morejdbc.NamedJdbcCall.call;
+ * import NamedJdbcCall.SqlTypes.*;
+ * ...
+ * private JdbcTemplate jdbcTemplate;
+ * ...
+ * String result = jdbcTemplate.execute(call("concat_str", VARCHAR)
+ *         .in("arg1", arg1)
+ *         .in("arg2", arg2));
+ * </pre>
+ * Example for OUT parameters:
+ * <pre>
+ * Out&lt;Integer&gt; sum = Out.of(INTEGER);
+ * Out&lt;Long&gt; mlt = Out.of(BIGINT);
+ *
+ * jdbc.execute(call("test_math")
+ *         .in("val1", 1)
+ *         .in("val2", 2L)
+ *         .out("out_sum", sum)
+ *         .out("out_mlt", mlt));
+ *
+ * System.out.println("sum is " + sum.get());
+ * System.out.println("mlt is " + mlt.get());
+ * </pre>
+ * Also you can use lambdas to store the result of OUT parameter:
+ * <pre>
+ * AtomicReference&lt;Integer&gt; sum = new AtomicReference&lt;&gt;();
+ * AtomicReference&lt;Long&gt; mlt = new AtomicReference&lt;&gt;();
+ *
+ * jdbc.execute(call("test_math")
+ *         .in("val1", 1)
+ *         .in("val2", 2L)
+ *         .out("out_sum", INTEGER, sum::set)
+ *         .out("out_mlt", BIGINT, mlt::set));
+ *
+ * System.out.println("sum is " + sum.get());
+ * System.out.println("mlt is " + mlt.get());
+ * </pre>
  *
  * @see org.springframework.jdbc.core.SqlParameterValue
  */

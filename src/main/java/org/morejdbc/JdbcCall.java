@@ -91,18 +91,18 @@ public class JdbcCall implements ConnectionCallback<Void>, SqlProvider {
 
     @Override
     public Void doInConnection(Connection conn) throws SQLException, DataAccessException {
-        InOut[] parameters = getParameters();
+        InOut<?>[] parameters = getParameters();
 
         try (CallableStatement cs = conn.prepareCall(sql)) {
             for (int i = 0; i < parameters.length; i++) {
-                InOut parameter = parameters[i];
+                InOut<?> parameter = parameters[i];
                 parameter.beforeExecute(cs, i + 1);
             }
 
             cs.execute();
 
             for (int i = 0; i < parameters.length; i++) {
-                InOut parameter = parameters[i];
+                InOut<?> parameter = parameters[i];
                 parameter.afterExecute(cs, i + 1);
             }
 
@@ -133,8 +133,8 @@ public class JdbcCall implements ConnectionCallback<Void>, SqlProvider {
         return Objects.hash(sql, parameters);
     }
 
-    private InOut[] getParameters() {
-        InOut[] parameters = this.parameters.toArray(new InOut[0]);
+    private InOut<?>[] getParameters() {
+        InOut<?>[] parameters = this.parameters.toArray(new InOut[0]);
         this.parameters = null;
         return parameters;
     }
