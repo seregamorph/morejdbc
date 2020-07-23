@@ -1,28 +1,28 @@
 --liquibase formatted sql
 
---changeset seregamorph:FEA-1-create-schema-1 splitStatements:false
-CREATE OR REPLACE FUNCTION hi_lo(
-      a  NUMERIC,
-      b  NUMERIC,
-      c  NUMERIC,
-  OUT hi NUMERIC,
-  OUT lo NUMERIC)
-AS $$
-BEGIN
-  hi := GREATEST(a, b, c);
-  lo := LEAST(a, b, c);
-END; $$
-LANGUAGE plpgsql;
+--changeset seregamorph:fea-1-create-schema-1 splitstatements:false
+create or replace function hi_lo(
+      a  numeric,
+      b  numeric,
+      c  numeric,
+  out hi numeric,
+  out lo numeric)
+as $$
+begin
+  hi := greatest(a, b, c);
+  lo := least(a, b, c);
+end; $$
+language plpgsql;
 
---changeset seregamorph:FEA-1-create-schema-2 splitStatements:false
-CREATE OR REPLACE FUNCTION refcursorfunc()
-  RETURNS refcursor AS $$
-DECLARE
+--changeset seregamorph:fea-1-create-schema-2 splitstatements:false
+create or replace function refcursorfunc()
+  returns refcursor as $$
+declare
   mycurs refcursor;
-BEGIN
-  OPEN mycurs FOR SELECT 1
-                  UNION SELECT 2;
-  RETURN mycurs;
-END; $$
-LANGUAGE plpgsql;
+begin
+  open mycurs for select 1
+                  union select 2;
+  return mycurs;
+end; $$
+language plpgsql;
 

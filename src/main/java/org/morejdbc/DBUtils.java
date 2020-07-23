@@ -2,7 +2,6 @@ package org.morejdbc;
 
 import org.jetbrains.annotations.Nullable;
 
-import java.sql.Blob;
 import java.sql.CallableStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,7 +10,7 @@ public class DBUtils {
 
     @Nullable
     public static Integer getIntOrNull(ResultSet rs, String columnName) throws SQLException {
-        int value = rs.getInt(columnName);
+        var value = rs.getInt(columnName);
         if (rs.wasNull()) {
             return null;
         }
@@ -20,7 +19,7 @@ public class DBUtils {
 
     @Nullable
     public static Integer getIntOrNull(CallableStatement cs, int idx) throws SQLException {
-        int value = cs.getInt(idx);
+        var value = cs.getInt(idx);
         if (cs.wasNull()) {
             return null;
         }
@@ -29,7 +28,7 @@ public class DBUtils {
 
     @Nullable
     public static Long getLongOrNull(ResultSet rs, String columnName) throws SQLException {
-        long value = rs.getLong(columnName);
+        var value = rs.getLong(columnName);
         if (rs.wasNull()) {
             return null;
         }
@@ -38,7 +37,7 @@ public class DBUtils {
 
     @Nullable
     public static Long getLongOrNull(CallableStatement cs, int idx) throws SQLException {
-        long value = cs.getLong(idx);
+        var value = cs.getLong(idx);
         if (cs.wasNull()) {
             return null;
         }
@@ -47,7 +46,7 @@ public class DBUtils {
 
     @Nullable
     public static Double getDoubleOrNull(ResultSet rs, String columnName) throws SQLException {
-        double value = rs.getDouble(columnName);
+        var value = rs.getDouble(columnName);
         if (rs.wasNull()) {
             return null;
         }
@@ -56,7 +55,7 @@ public class DBUtils {
 
     @Nullable
     public static byte[] getBlobBytes(ResultSet rs, String columnName) throws SQLException {
-        Blob blob = rs.getBlob(columnName);
+        var blob = rs.getBlob(columnName);
         try {
             return blob == null || blob.length() == 0 ? null : blob.getBytes(1, (int) blob.length());
         } finally {
@@ -68,7 +67,7 @@ public class DBUtils {
 
     @Nullable
     public static byte[] getBlobBytes(CallableStatement cs, int idx) throws SQLException {
-        Blob blob = cs.getBlob(idx);
+        var blob = cs.getBlob(idx);
         try {
             return blob == null || blob.length() == 0 ? null : blob.getBytes(1, (int) blob.length());
         } finally {

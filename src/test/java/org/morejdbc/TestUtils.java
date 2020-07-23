@@ -4,12 +4,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import org.springframework.jdbc.datasource.SmartDataSource;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringReader;
-import java.io.UncheckedIOException;
-import java.net.URL;
+import java.io.*;
 import java.sql.Connection;
 import java.util.AbstractMap;
 import java.util.Map;
@@ -20,7 +15,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 class TestUtils {
 
     static Properties propertiesFromString(String str) {
-        Properties properties = new Properties();
+        var properties = new Properties();
         if (str != null && !str.isEmpty()) {
             try {
                 properties.load(new StringReader(str));
@@ -45,13 +40,13 @@ class TestUtils {
     }
 
     static byte[] concat(byte[]... arrays) {
-        int length = 0;
-        for (byte[] array : arrays) {
+        var length = 0;
+        for (var array : arrays) {
             length += array.length;
         }
-        byte[] result = new byte[length];
-        int pos = 0;
-        for (byte[] array : arrays) {
+        var result = new byte[length];
+        var pos = 0;
+        for (var array : arrays) {
             System.arraycopy(array, 0, result, pos, array.length);
             pos += array.length;
         }
@@ -59,7 +54,7 @@ class TestUtils {
     }
 
     static byte[] readBytes(ClassLoader classLoader, String resource) {
-        URL url = classLoader.getResource(resource);
+        var url = classLoader.getResource(resource);
         if (url == null) {
             throw new IllegalStateException("Missing resource [" + resource + "]");
         }
@@ -82,8 +77,8 @@ class TestUtils {
     }
 
     private static byte[] toByteArray(InputStream input) throws IOException {
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        byte[] buffer = new byte[8192];
+        var output = new ByteArrayOutputStream();
+        var buffer = new byte[8192];
         int n;
         while ((n = input.read(buffer)) != -1) {
             output.write(buffer, 0, n);
@@ -92,7 +87,7 @@ class TestUtils {
     }
 
     static JdbcTemplate jdbc(Connection connection) {
-        SmartDataSource ds = smartDataSource(connection);
+        var ds = smartDataSource(connection);
         return new JdbcTemplate(ds);
     }
 
