@@ -21,63 +21,63 @@ public class MockitoCallTest {
 
     @Test
     public void testCallSqlMock() {
-        var jdbc = mock(JdbcTemplate.class);
-        var sum = MockOut.of(INTEGER);
-        var mlt = MockOut.of(INTEGER);
+        JdbcTemplate jdbc = mock(JdbcTemplate.class);
+        MockOut<Integer> sum = MockOut.of(INTEGER);
+        MockOut<Integer> mlt = MockOut.of(INTEGER);
         when(jdbc.execute(callSql("{call test_math(?, ?, ?, ?)}").in(10).in(20).out(sum).out(mlt))).then(invocation -> {
             sum.setTo(invocation.getArguments()[0], 30);
             mlt.setTo(invocation.getArguments()[0], 200);
             return null;
         });
-        var result = serviceCallSql(jdbc, 10, 20);
+        Result result = serviceCallSql(jdbc, 10, 20);
         assertEquals(30, result.sum);
         assertEquals(200, result.mlt);
     }
 
     @Test
     public void testCallNamedMock() {
-        var jdbc = mock(JdbcTemplate.class);
-        var sum = MockOut.of(INTEGER);
-        var mlt = MockOut.of(BIGINT);
+        JdbcTemplate jdbc = mock(JdbcTemplate.class);
+        MockOut<Integer> sum = MockOut.of(INTEGER);
+        MockOut<Long> mlt = MockOut.of(BIGINT);
         when(jdbc.execute(call("test_math").in("val1", 10).in("val2", 20).out("out_sum", sum).out("out_mlt", mlt))).then(invocation -> {
             sum.setTo(invocation.getArguments()[0], 30);
             mlt.setTo(invocation.getArguments()[0], 200L);
             return null;
         });
-        var result = serviceCallNamed(jdbc, 10, 20);
+        Result result = serviceCallNamed(jdbc, 10, 20);
         assertEquals(30, result.sum);
         assertEquals(200, result.mlt);
     }
 
     @Test
     public void testCallNamedFunctionMock() {
-        var jdbc = mock(JdbcTemplate.class);
+        JdbcTemplate jdbc = mock(JdbcTemplate.class);
         when(jdbc.execute(call("get_concat", VARCHAR).in("s2", "def").in("s1", 4))).thenReturn("4def");
-        var result = serviceCallNamedFunction(jdbc, 4, "def");
+        String result = serviceCallNamedFunction(jdbc, 4, "def");
         assertEquals("4def", result);
     }
 
     @Test
     public void testRefCursorOutParam() {
-        var jdbc = mock(JdbcTemplate.class);
-        var out = MockOut.of(cursor((rs, rowNum) -> immutableEntry("key", "value")));
+        JdbcTemplate jdbc = mock(JdbcTemplate.class);
+        MockOut<List<Map.Entry<String, String>>> out = MockOut.of(cursor((rs, rowNum) -> immutableEntry("key", "value")));
         when(jdbc.execute(call("proc_extras_tab").in("extra_string", "1=value1;2=value2;6=value6;").out("v_cur", out))).then(invocation -> {
             out.setTo(invocation.getArguments()[0], Arrays.asList(immutableEntry("1", "value1"), immutableEntry("2", "value2"), immutableEntry("6", "value6")));
             return null;
         });
-        var extras = serviceTestRefCursorOutParam(jdbc, "1=value1;2=value2;6=value6;");
+        List<Map.Entry<String, String>> extras = serviceTestRefCursorOutParam(jdbc, "1=value1;2=value2;6=value6;");
         assertEquals(Arrays.asList(immutableEntry("1", "value1"), immutableEntry("2", "value2"), immutableEntry("6", "value6")), extras);
     }
 
     private static List<Map.Entry<String, String>> serviceTestRefCursorOutParam(JdbcTemplate jdbc, String extra) {
-        var outExtras = Out.of(cursor((rs, rowNum) -> immutableEntry(rs.getString("id"), rs.getString("value"))));
+        Out<List<Map.Entry<String, String>>> outExtras = Out.of(cursor((rs, rowNum) -> immutableEntry(rs.getString("id"), rs.getString("value"))));
         jdbc.execute(call("proc_extras_tab").in("extra_string", extra).out("v_cur", outExtras));
         return outExtras.get();
     }
 
     private static Result serviceCallSql(JdbcTemplate jdbc, int val1, int val2) {
-        var sum = Out.of(INTEGER);
-        var mlt = Out.of(INTEGER);
+        Out<Integer> sum = Out.of(INTEGER);
+        Out<Integer> mlt = Out.of(INTEGER);
 
         jdbc.execute(callSql("{call test_math(?, ?, ?, ?)}")
                 .in(val1)
@@ -89,8 +89,8 @@ public class MockitoCallTest {
     }
 
     private static Result serviceCallNamed(JdbcTemplate jdbc, int val1, int val2) {
-        var sum = new AtomicReference<Integer>();
-        var mlt = new AtomicReference<Long>();
+        AtomicReference<Integer> sum = new AtomicReference<>();
+        AtomicReference<Long> mlt = new AtomicReference<>();
 
         jdbc.execute(call("test_math")
                 .in("val1", val1)

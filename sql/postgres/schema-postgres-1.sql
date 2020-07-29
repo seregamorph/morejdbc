@@ -25,4 +25,3 @@ begin
   return mycurs;
 end; $$
 language plpgsql;
-

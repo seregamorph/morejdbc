@@ -9,6 +9,7 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.morejdbc.JdbcCall.callSql;
@@ -24,7 +25,7 @@ public class MysqlJdbcCallTest {
 
     @BeforeEach
     public void before() throws SQLException {
-        var props = TestUtils.propertiesFromString(TestUtils.readString("mysql_test.properties"));
+        Properties props = TestUtils.propertiesFromString(TestUtils.readString("mysql_test.properties"));
         this.connection = DriverManager.getConnection(props.getProperty("url"), props);
         DataSource dataSource = TestUtils.smartDataSource(this.connection);
         this.jdbc = new JdbcTemplate(dataSource);
@@ -39,8 +40,8 @@ public class MysqlJdbcCallTest {
 
     @Test
     public void testMath() {
-        var sum = Out.of(INTEGER);
-        var mlt = Out.of(INTEGER);
+        Out<Integer> sum = Out.of(INTEGER);
+        Out<Integer> mlt = Out.of(INTEGER);
 
         jdbc.execute(callSql("{call test_math(?, ?, ?, ?)}")
                 .in(10)

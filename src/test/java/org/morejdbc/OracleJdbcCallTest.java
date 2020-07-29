@@ -13,7 +13,10 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -38,8 +41,8 @@ public class OracleJdbcCallTest {
 
     @BeforeEach
     public void before() throws SQLException {
-        var props = TestUtils.propertiesFromString(TestUtils.readString("oracle_test.properties"));
-        var def = Locale.getDefault();
+        Properties props = TestUtils.propertiesFromString(TestUtils.readString("oracle_test.properties"));
+        Locale def = Locale.getDefault();
         try {
             // workaround for XE with russian locale
             Locale.setDefault(Locale.ENGLISH);
@@ -59,8 +62,8 @@ public class OracleJdbcCallTest {
 
     @Test
     public void testCall1() {
-        var sum = Out.of(INTEGER);
-        var mlt = Out.of(INTEGER);
+        Out<Integer> sum = Out.of(INTEGER);
+        Out<Integer> mlt = Out.of(INTEGER);
 
         jdbc.execute(callSql("{call test_more_jdbc_pkg.calc_sum_and_multiply_of_two_numbers(?, ?, ?, ?)}")
                 .in(8)
@@ -74,8 +77,8 @@ public class OracleJdbcCallTest {
 
     @Test
     public void testCallBadArgs() {
-        var sum = Out.of(INTEGER);
-        var mlt = Out.of(INTEGER);
+        Out<Integer> sum = Out.of(INTEGER);
+        Out<Integer> mlt = Out.of(INTEGER);
         try {
             jdbc.execute(callSql("{call test_more_jdbc_pkg.calc_sum_and_multiply_of_two_numbers(?, ?, ?, ?, ?)}")
                     .in(0)
@@ -95,9 +98,9 @@ public class OracleJdbcCallTest {
     public void testInsertReturning() {
         // table_with_identity_pk (id number(9) identity primary key, value varchar2(20 char));
         // checks charset
-        var valueIn = "тест" + System.currentTimeMillis();
-        var idOut = Out.of(BIGINT);
-        var valueOut = new AtomicReference<String>();
+        String valueIn = "тест" + System.currentTimeMillis();
+        Out<Long> idOut = Out.of(BIGINT);
+        AtomicReference<String> valueOut = new AtomicReference<>();
 
         jdbc.execute(callSql("begin insert into table_with_identity_pk (value) values (?) " + "returning id, value into ?, ?; end;")
                 .in(valueIn)
@@ -112,7 +115,7 @@ public class OracleJdbcCallTest {
 
     @Test
     public void testCallFuncResultSet() {
-        var extras = Out.of(cursor((row, rowNum) -> immutableEntry(row.getString("id"), row.getString("value"))));
+        Out<List<Map.Entry<String, String>>> extras = Out.of(cursor((row, rowNum) -> immutableEntry(row.getString("id"), row.getString("value"))));
 
         jdbc.execute(callSql("{? = call test_more_jdbc_pkg.get_cursor_from_key_value_as_string(?)}")
                 .out(extras)
@@ -124,18 +127,18 @@ public class OracleJdbcCallTest {
     @Test
     public void testLongBlobConcat() {
         // > 4000 bytes
-        var blob1 = new byte[4096];
-        var blob2 = new byte[4096];
+        byte[] blob1 = new byte[4096];
+        byte[] blob2 = new byte[4096];
         ThreadLocalRandom.current().nextBytes(blob1);
         ThreadLocalRandom.current().nextBytes(blob2);
-        var result = Out.of(BLOB);
+        Out<byte[]> result = Out.of(BLOB);
 
         jdbc.execute(callSql("{? = call test_more_jdbc_pkg.get_two_blobs_concatenated(?, ?)}")
                 .out(result)
                 .in(blob1)
                 .in(blob2));
 
-        var expected = TestUtils.concat(blob1, blob2);
+        byte[] expected = TestUtils.concat(blob1, blob2);
         assertArrayEquals(expected, result.get());
     }
 }

@@ -14,8 +14,10 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -43,8 +45,8 @@ public class OracleNamedJdbcCallTest {
 
     @BeforeEach
     public void before() throws SQLException {
-        var props = TestUtils.propertiesFromString(TestUtils.readString("oracle_test.properties"));
-        var def = Locale.getDefault();
+        Properties props = TestUtils.propertiesFromString(TestUtils.readString("oracle_test.properties"));
+        Locale def = Locale.getDefault();
         try {
             // workaround for XE with russian locale
             Locale.setDefault(Locale.ENGLISH);
@@ -64,8 +66,8 @@ public class OracleNamedJdbcCallTest {
 
     @Test
     public void testNamedCall1() {
-        var sum = Out.of(INTEGER);
-        var mlt = Out.of(BIGINT);
+        Out<Integer> sum = Out.of(INTEGER);
+        Out<Long> mlt = Out.of(BIGINT);
 
         jdbc.execute(call("test_more_jdbc_pkg.calc_sum_and_multiply_of_two_numbers")
                 .in("p_number1", 1)
@@ -79,8 +81,8 @@ public class OracleNamedJdbcCallTest {
 
     @Test
     public void testNamedCall1Consumer() {
-        var sum = new AtomicReference<Integer>();
-        var mlt = new AtomicReference<Long>();
+        AtomicReference<Integer> sum = new AtomicReference<>();
+        AtomicReference<Long> mlt = new AtomicReference<>();
 
         jdbc.execute(call("test_more_jdbc_pkg.calc_sum_and_multiply_of_two_numbers")
                 .in("p_number1", 1)
@@ -94,8 +96,8 @@ public class OracleNamedJdbcCallTest {
 
     @Test
     public void testNamedCall2() {
-        var sum = Out.of(INTEGER);
-        var mlt = Out.of(INTEGER);
+        Out<Integer> sum = Out.of(INTEGER);
+        Out<Integer> mlt = Out.of(INTEGER);
 
         jdbc.execute(call("test_more_jdbc_pkg.calc_sum_and_multiply_of_two_numbers")
                 .out("po_mlt", mlt)
@@ -109,11 +111,11 @@ public class OracleNamedJdbcCallTest {
 
     @Test
     public void testNamedCall3() {
-        var call = call("test_more_jdbc_pkg.calc_sum_and_multiply_of_two_numbers")
+        NamedJdbcCall<Void> call = call("test_more_jdbc_pkg.calc_sum_and_multiply_of_two_numbers")
                 .in("p_number1", 1)
                 .in("p_number2", 2);
-        var sum = call.out("po_sum", INTEGER);
-        var mlt = call.out("po_mlt", INTEGER);
+        Out<Integer> sum = call.out("po_sum", INTEGER);
+        Out<Integer> mlt = call.out("po_mlt", INTEGER);
         jdbc.execute(call);
 
         assertEquals(Integer.valueOf(3), sum.get());
@@ -122,7 +124,7 @@ public class OracleNamedJdbcCallTest {
 
     @Test
     public void testNamedCallFunc1() {
-        var result = jdbc.execute(call("test_more_jdbc_pkg.get_concat_of_two_strings", VARCHAR)
+        String result = jdbc.execute(call("test_more_jdbc_pkg.get_concat_of_two_strings", VARCHAR)
                 .in("p_string1", "abc")
                 .in("p_string2", (String) null));
 
@@ -132,7 +134,7 @@ public class OracleNamedJdbcCallTest {
     @Test
     public void testNamedCallFunc2() {
         // reordered p_string1, p_string2
-        var result = jdbc.execute(call("test_more_jdbc_pkg.get_concat_of_two_strings", VARCHAR)
+        String result = jdbc.execute(call("test_more_jdbc_pkg.get_concat_of_two_strings", VARCHAR)
                 .in("p_string2", new StringBuilder("XYZ"))
                 .in("p_string1", "abc"));
 
@@ -141,7 +143,7 @@ public class OracleNamedJdbcCallTest {
 
     @Test
     public void testNamedCallFunc3() {
-        var result = jdbc.execute(call("test_more_jdbc_pkg.get_concat_of_two_strings", VARCHAR)
+        String result = jdbc.execute(call("test_more_jdbc_pkg.get_concat_of_two_strings", VARCHAR)
                 .in("p_string2", "def")
                 .in("p_string1", 4));
 
@@ -151,7 +153,7 @@ public class OracleNamedJdbcCallTest {
     @Test
     public void testNamedCallFunc4() {
         // pass null-string with unknown type
-        var result = jdbc.execute(call("test_more_jdbc_pkg.get_concat_of_two_strings", VARCHAR)
+        String result = jdbc.execute(call("test_more_jdbc_pkg.get_concat_of_two_strings", VARCHAR)
                 .in("p_string1", "abc")
                 .in("p_string2", null, UNKNOWN));
 
@@ -162,7 +164,7 @@ public class OracleNamedJdbcCallTest {
     public void testNamedCallFuncResultSet() {
         RowMapper<Map.Entry<String, String>> mapper = (rs, rowNum) -> immutableEntry(rs.getString("id"), rs.getString("value"));
 
-        var extras = jdbc.execute(call("test_more_jdbc_pkg.get_cursor_from_key_value_as_string", cursor(mapper))
+        List<Map.Entry<String, String>> extras = jdbc.execute(call("test_more_jdbc_pkg.get_cursor_from_key_value_as_string", cursor(mapper))
                 .in("p_key_value_string", "1=value1;2=value2;6=value6;"));
 
         assertEquals(Arrays.asList(immutableEntry("1", "value1"), immutableEntry("2", "value2"), immutableEntry("6", "value6")), extras);
@@ -171,7 +173,7 @@ public class OracleNamedJdbcCallTest {
     @Test
     public void testRefCursorOutParam() {
         RowMapper<Map.Entry<String, String>> mapper = (rs, rowNum) -> immutableEntry(rs.getString("id"), rs.getString("value"));
-        var outExtras = Out.of(cursor(mapper));
+        Out<List<Map.Entry<String, String>>> outExtras = Out.of(cursor(mapper));
 
         jdbc.execute(call("test_more_jdbc_pkg.get_cursor_from_key_value_as_string")
                 .in("p_key_value_string", "1=value1;2=value2;6=value6;")
@@ -182,7 +184,7 @@ public class OracleNamedJdbcCallTest {
 
     @Test
     public void testNamedCallInOut1() {
-        var sum = Out.of(DECIMAL);
+        Out<BigDecimal> sum = Out.of(DECIMAL);
 
         jdbc.execute(call("test_more_jdbc_pkg.calc_sum_of_two_numbers_with_in_out_parameter")
                 .in("p_number1", 1)
@@ -194,7 +196,7 @@ public class OracleNamedJdbcCallTest {
 
     @Test
     public void testNamedCallInOut2() {
-        var sum = Out.of(INTEGER);
+        Out<Integer> sum = Out.of(INTEGER);
 
         jdbc.execute(call("test_more_jdbc_pkg.calc_sum_of_two_numbers_with_in_out_parameter")
                 .in("p_number1", 1)
@@ -206,7 +208,7 @@ public class OracleNamedJdbcCallTest {
 
     @Test
     public void testNamedCallInOut2Consumer() {
-        var sum = new AtomicReference<Integer>();
+        AtomicReference<Integer> sum = new AtomicReference<>();
 
         jdbc.execute(call("test_more_jdbc_pkg.calc_sum_of_two_numbers_with_in_out_parameter")
                 .in("p_number1", 1)
@@ -218,8 +220,8 @@ public class OracleNamedJdbcCallTest {
 
     @Test
     public void testPackageCallable4arg() {
-        var sum = Out.of(BIGINT);
-        var mlt = Out.of(INTEGER);
+        Out<Long> sum = Out.of(BIGINT);
+        Out<Integer> mlt = Out.of(INTEGER);
 
         jdbc.execute(call("test_more_jdbc_pkg.calc_sum_and_multiply_of_two_numbers")
                 .out("po_sum", sum)
@@ -233,7 +235,7 @@ public class OracleNamedJdbcCallTest {
 
     @Test
     public void testPackageCallable3arg() {
-        var sum = Out.of(INTEGER);
+        Out<Integer> sum = Out.of(INTEGER);
 
         jdbc.execute(call("test_more_jdbc_pkg.calc_sum_and_multiply_of_two_numbers")
                 .in("p_number1", 1)
@@ -247,32 +249,32 @@ public class OracleNamedJdbcCallTest {
     @Test
     public void testLongBinaryConcat() {
         // > 4000 bytes
-        var blob1 = new byte[4096];
-        var blob2 = new byte[4096];
+        byte[] blob1 = new byte[4096];
+        byte[] blob2 = new byte[4096];
         ThreadLocalRandom.current().nextBytes(blob1);
         ThreadLocalRandom.current().nextBytes(blob2);
 
-        var result = jdbc.execute(call("test_more_jdbc_pkg.get_two_blobs_concatenated", BINARY)
+        byte[] result = jdbc.execute(call("test_more_jdbc_pkg.get_two_blobs_concatenated", BINARY)
                 .in("p_blob1", blob1, BINARY)
                 .in("p_blob2", blob2, BINARY));
 
-        var expected = TestUtils.concat(blob1, blob2);
+        byte[] expected = TestUtils.concat(blob1, blob2);
         assertArrayEquals(expected, result);
     }
 
     @Test
     public void testLongBlobConcat() {
         // > 4000 bytes
-        var blob1 = new byte[4096];
-        var blob2 = new byte[4096];
+        byte[] blob1 = new byte[4096];
+        byte[] blob2 = new byte[4096];
         ThreadLocalRandom.current().nextBytes(blob1);
         ThreadLocalRandom.current().nextBytes(blob2);
 
-        var result = jdbc.execute(call("test_more_jdbc_pkg.get_two_blobs_concatenated", BLOB)
+        byte[] result = jdbc.execute(call("test_more_jdbc_pkg.get_two_blobs_concatenated", BLOB)
                 .in("p_blob1", blob1)
                 .in("p_blob2", blob2));
 
-        var expected = TestUtils.concat(blob1, blob2);
+        byte[] expected = TestUtils.concat(blob1, blob2);
         assertArrayEquals(expected, result);
     }
 }

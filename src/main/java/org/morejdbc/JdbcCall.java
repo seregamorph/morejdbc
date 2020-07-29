@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.SqlProvider;
 
 import java.math.BigDecimal;
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -92,7 +93,7 @@ public class JdbcCall implements ConnectionCallback<Void>, SqlProvider {
     public Void doInConnection(Connection conn) throws SQLException, DataAccessException {
         InOut<?>[] parameters = getParameters();
 
-        try (var cs = conn.prepareCall(sql)) {
+        try (CallableStatement cs = conn.prepareCall(sql)) {
             for (int i = 0; i < parameters.length; i++) {
                 InOut<?> parameter = parameters[i];
                 parameter.beforeExecute(cs, i + 1);

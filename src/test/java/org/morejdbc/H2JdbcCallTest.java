@@ -6,10 +6,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -24,7 +26,7 @@ public class H2JdbcCallTest {
 
     @BeforeEach
     public void before() throws SQLException {
-        var props = TestUtils.propertiesFromString(TestUtils.readString("h2_test.properties"));
+        Properties props = TestUtils.propertiesFromString(TestUtils.readString("h2_test.properties"));
         this.connection = DriverManager.getConnection(props.getProperty("url"), props);
         DataSource dataSource = TestUtils.smartDataSource(this.connection);
         this.jdbc = new JdbcTemplate(dataSource);
@@ -40,7 +42,7 @@ public class H2JdbcCallTest {
 
     @Test
     public void testPureJdbc() throws SQLException {
-        var call = connection.prepareCall("{? = call mult(?, ?)}");
+        CallableStatement call = connection.prepareCall("{? = call mult(?, ?)}");
         call.registerOutParameter(1, Types.INTEGER);
         call.setInt(2, 2);
         call.setInt(3, 3);
@@ -50,7 +52,7 @@ public class H2JdbcCallTest {
 
     @Test
     public void testMultOut() {
-        var out = Out.of(INTEGER);
+        Out<Integer> out = Out.of(INTEGER);
 
         jdbc.execute(callSql("{? = call mult(?, ?)}")
                 .out(out)
@@ -62,7 +64,7 @@ public class H2JdbcCallTest {
 
     @Test
     public void testMultConsumer() {
-        var out = new AtomicInteger();
+        AtomicInteger out = new AtomicInteger();
 
         jdbc.execute(callSql("{? = call mult(?, ?)}")
                 .out(INTEGER, out::set)

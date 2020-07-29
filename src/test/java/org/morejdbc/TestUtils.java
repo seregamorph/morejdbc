@@ -5,6 +5,7 @@ import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import org.springframework.jdbc.datasource.SmartDataSource;
 
 import java.io.*;
+import java.net.URL;
 import java.sql.Connection;
 import java.util.AbstractMap;
 import java.util.Map;
@@ -15,7 +16,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 class TestUtils {
 
     static Properties propertiesFromString(String str) {
-        var properties = new Properties();
+        Properties properties = new Properties();
         if (str != null && !str.isEmpty()) {
             try {
                 properties.load(new StringReader(str));
@@ -40,13 +41,13 @@ class TestUtils {
     }
 
     static byte[] concat(byte[]... arrays) {
-        var length = 0;
-        for (var array : arrays) {
+        int length = 0;
+        for (byte[] array : arrays) {
             length += array.length;
         }
-        var result = new byte[length];
-        var pos = 0;
-        for (var array : arrays) {
+        byte[] result = new byte[length];
+        int pos = 0;
+        for (byte[] array : arrays) {
             System.arraycopy(array, 0, result, pos, array.length);
             pos += array.length;
         }
@@ -54,7 +55,7 @@ class TestUtils {
     }
 
     static byte[] readBytes(ClassLoader classLoader, String resource) {
-        var url = classLoader.getResource(resource);
+        URL url = classLoader.getResource(resource);
         if (url == null) {
             throw new IllegalStateException("Missing resource [" + resource + "]");
         }
@@ -77,8 +78,8 @@ class TestUtils {
     }
 
     private static byte[] toByteArray(InputStream input) throws IOException {
-        var output = new ByteArrayOutputStream();
-        var buffer = new byte[8192];
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        byte[] buffer = new byte[8192];
         int n;
         while ((n = input.read(buffer)) != -1) {
             output.write(buffer, 0, n);
@@ -87,7 +88,7 @@ class TestUtils {
     }
 
     static JdbcTemplate jdbc(Connection connection) {
-        var ds = smartDataSource(connection);
+        SmartDataSource ds = smartDataSource(connection);
         return new JdbcTemplate(ds);
     }
 
