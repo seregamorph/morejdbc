@@ -4,11 +4,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import org.springframework.jdbc.datasource.SmartDataSource;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringReader;
-import java.io.UncheckedIOException;
+import java.io.*;
 import java.net.URL;
 import java.sql.Connection;
 import java.util.AbstractMap;
