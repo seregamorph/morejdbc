@@ -1,32 +1,32 @@
 package org.morejdbc;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.jdbc.core.JdbcTemplate;
-
-import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.util.Properties;
-
 import static org.junit.Assert.assertEquals;
 import static org.morejdbc.JdbcCall.callSql;
 import static org.morejdbc.SqlTypes.INTEGER;
 
-/**
- * Follow instructions in readme-mysql-tests.md to prepare the database.
- */
-public class MysqlJdbcCallTest {
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import javax.sql.DataSource;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Test;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.testcontainers.containers.MySQLContainer;
+
+public class MySQLJdbcCallTest {
+
+    @ClassRule
+    public static final MySQLContainer<?> mysql = new MySQLContainer<>()
+            .withInitScript("sql/mysql/schema.sql");
 
     private Connection connection;
     private JdbcTemplate jdbc;
 
     @Before
     public void before() throws SQLException {
-        Properties props = TestUtils.propertiesFromString(TestUtils.readString("mysql_test.properties"));
-        this.connection = DriverManager.getConnection(props.getProperty("url"), props);
+        connection = DriverManager.getConnection(mysql.getJdbcUrl(), mysql.getUsername(), mysql.getPassword());
         DataSource dataSource = TestUtils.smartDataSource(this.connection);
         this.jdbc = new JdbcTemplate(dataSource);
     }

@@ -1,15 +1,13 @@
 package org.morejdbc;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.jdbc.core.CallableStatementCallback;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.support.TransactionTemplate;
+import static org.junit.Assert.assertEquals;
+import static org.morejdbc.JdbcCall.callSql;
+import static org.morejdbc.PostgresSqlTypes.cursor;
+import static org.morejdbc.SqlTypes.NUMERIC;
+import static org.testcontainers.ext.ScriptUtils.DEFAULT_BLOCK_COMMENT_END_DELIMITER;
+import static org.testcontainers.ext.ScriptUtils.DEFAULT_BLOCK_COMMENT_START_DELIMITER;
+import static org.testcontainers.ext.ScriptUtils.DEFAULT_COMMENT_PREFIX;
 
-import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -17,27 +15,46 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
+import javax.script.ScriptException;
+import javax.sql.DataSource;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
+import org.junit.Test;
+import org.springframework.jdbc.core.CallableStatementCallback;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.ext.ScriptUtils;
+import org.testcontainers.jdbc.JdbcDatabaseDelegate;
 
-import static org.junit.Assert.assertEquals;
-import static org.morejdbc.JdbcCall.callSql;
-import static org.morejdbc.PostgresSqlTypes.cursor;
-import static org.morejdbc.SqlTypes.NUMERIC;
-
-/**
- * Follow instructions in readme-postgres-tests.md to prepare the database.
- */
 public class PostgresJdbcCallTest {
+
+    @ClassRule
+    public static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>();
+
+    private static final String SEPARATOR = ";\n\n";
 
     private Connection connection;
     private JdbcTemplate jdbc;
     private TransactionTemplate transactionTemplate;
 
+    @BeforeClass
+    public static void beforeClass() throws ScriptException {
+        String scriptPath = "sql/postgres/schema.sql";
+        String scripts = TestUtils.readString(scriptPath);
+        ScriptUtils.executeDatabaseScript(new JdbcDatabaseDelegate(postgres, ""), scriptPath, scripts,
+                false, false, DEFAULT_COMMENT_PREFIX, SEPARATOR,
+                DEFAULT_BLOCK_COMMENT_START_DELIMITER, DEFAULT_BLOCK_COMMENT_END_DELIMITER);
+    }
+
     @Before
     public void before() throws SQLException {
-        Properties props = TestUtils.propertiesFromString(TestUtils.readString("psql_test.properties"));
-        this.connection = DriverManager.getConnection(props.getProperty("url"), props);
+        connection = DriverManager.getConnection(postgres.getJdbcUrl(), postgres.getUsername(), postgres.getPassword());
         DataSource dataSource = TestUtils.smartDataSource(this.connection);
         PlatformTransactionManager transactionManager = new DataSourceTransactionManager(dataSource);
         this.transactionTemplate = new TransactionTemplate(transactionManager);
@@ -61,8 +78,7 @@ public class PostgresJdbcCallTest {
                     hl.lo = row.getInt("lo");
                     return hl;
                 },
-                10, 20, 30
-        );
+                10, 20, 30);
         assertEquals(1, list.size());
         HiLo hl = list.get(0);
         assertEquals(30, hl.hi);
@@ -98,8 +114,7 @@ public class PostgresJdbcCallTest {
                 .in(20)
                 .in(30)
                 .out(NUMERIC, hi::set)
-                .out(NUMERIC, lo::set)
-        );
+                .out(NUMERIC, lo::set));
         assertEquals(30, hi.get().intValue());
         assertEquals(10, lo.get().intValue());
     }
@@ -110,8 +125,7 @@ public class PostgresJdbcCallTest {
         List<Integer> values = transactionTemplate.execute(transaction -> {
             Out<List<Integer>> outValues = Out.of(cursor((row, rowNum) -> row.getInt(1)));
             jdbc.execute(callSql("{ ? = call refcursorfunc() }")
-                    .out(outValues)
-            );
+                    .out(outValues));
             return outValues.get();
         });
         assertEquals(Arrays.asList(1, 2), values);

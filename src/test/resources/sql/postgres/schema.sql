@@ -1,6 +1,4 @@
---liquibase formatted sql
 
---changeset seregamorph:FEA-1-create-schema-1 splitStatements:false
 CREATE OR REPLACE FUNCTION hi_lo(
       a  NUMERIC,
       b  NUMERIC,
@@ -14,7 +12,6 @@ BEGIN
 END; $$
 LANGUAGE plpgsql;
 
---changeset seregamorph:FEA-1-create-schema-2 splitStatements:false
 CREATE OR REPLACE FUNCTION refcursorfunc()
   RETURNS refcursor AS $$
 DECLARE
@@ -25,4 +22,3 @@ BEGIN
   RETURN mycurs;
 END; $$
 LANGUAGE plpgsql;
-
