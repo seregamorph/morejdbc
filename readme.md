@@ -9,7 +9,10 @@ To add the library in Maven:
     <version>1.0</version>
 </dependency>
 ```
-For gradle: `compile com.github.seregamorph:morejdbc:1.0`
+For gradle:
+```groovy
+implementation com.github.seregamorph:morejdbc:1.0
+```
 
 # Oracle Examples
 
