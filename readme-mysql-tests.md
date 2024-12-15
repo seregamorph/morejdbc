@@ -11,6 +11,7 @@ docker run --rm -it -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root -v $PWD/init:/docke
 
 #### Create MySQL schema as test user
 ```shell
+# first copy mysql-connector-j.jar to $LIQUIBASE_HOME/internal/lib
 $LIQUIBASE_HOME/liquibase --url=jdbc:mysql://127.0.0.1:3306/test --username=test --password=test --changeLogFile=changelog.xml --logLevel=info update
 ```
 
