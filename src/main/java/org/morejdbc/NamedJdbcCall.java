@@ -1,8 +1,8 @@
 package org.morejdbc;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.SqlProvider;
@@ -73,7 +73,7 @@ import static java.util.Objects.requireNonNull;
  */
 public class NamedJdbcCall<T> implements ConnectionCallback<T>, SqlProvider {
 
-    private static final Logger logger = LoggerFactory.getLogger(NamedJdbcCall.class);
+    private static final Log logger = LogFactory.getLog(NamedJdbcCall.class);
 
     List<NamedParameter<?>> parameters = new ArrayList<>();
     private SQLExceptionHandler<T> sqlExceptionHandler;
@@ -250,7 +250,7 @@ public class NamedJdbcCall<T> implements ConnectionCallback<T>, SqlProvider {
         NamedParameter<?>[] parameters = getParameters();
 
         this.sql = getSql(returnType != null, parameters);
-        logger.trace("sql: {}", sql);
+        logger.trace("sql: " + sql);
 
         try (CallableStatement cs = conn.prepareCall(this.sql)) {
             @Nullable Out<T> result = returnType != null ? Out.of(returnType) : null;
