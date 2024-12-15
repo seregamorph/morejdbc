@@ -6,12 +6,12 @@ To add the library in Maven:
 <dependency>
     <groupId>com.github.seregamorph</groupId>
     <artifactId>morejdbc</artifactId>
-    <version>1.0</version>
+    <version>1.1</version>
 </dependency>
 ```
 For gradle:
 ```groovy
-implementation com.github.seregamorph:morejdbc:1.0
+implementation("com.github.seregamorph:morejdbc:1.1")
 ```
 
 # Oracle Examples
