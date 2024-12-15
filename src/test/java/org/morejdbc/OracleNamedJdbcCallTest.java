@@ -184,11 +184,10 @@ public class OracleNamedJdbcCallTest {
 
     @Test
     public void testRefCursorOutParam() {
-        RowMapper<Map.Entry<String, String>> mapper = (rs, rowNum) -> {
-            return immutableEntry(rs.getString("id"), rs.getString("value"));
-        };
-        Out<String> outExtraString = Out.of(VARCHAR);
-        Out<List<Map.Entry<String, String>>> outExtras = Out.of(cursor(mapper));
+        var outExtraString = Out.of(VARCHAR);
+        var outExtras = Out.of(cursor((rs, rowNum) -> Map.entry(
+                rs.getString("id"), rs.getString("value")
+        )));
 
         jdbc.execute(call("proc_extras_tab")
                 .in("extra_string", "1=value1;2=value2;6=value6;")
