@@ -1,3 +1,6 @@
+[![Maven Central Version](https://img.shields.io/maven-central/v/com.github.seregamorph/morejdbc?style=flat-square)](https://central.sonatype.com/artifact/com.github.seregamorph/morejdbc/overview)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+
 This project contains helper classes to call stored procedures and functions. The base framework is spring (spring-jdbc).
 It is fair-typesafe (no unsafe casts inside). Most compatible database is Oracle.
 
